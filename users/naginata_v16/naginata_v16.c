@@ -790,10 +790,7 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
           removeFromListArrayAt(&nginput, 0);
         }
       } else {
-        NGList e;
-        initializeList(&e);
-        addToListArray(&nginput, &e);
-        if (nginput.size > 1 || number_of_candidates(&(nginput.elements[0]), false) == 1) {
+        if (nginput.size > 0 && number_of_candidates(&(nginput.elements[0]), false) == 1) {
           ng_type(&(nginput.elements[0]));
           removeFromListArrayAt(&nginput, 0);
         }
@@ -959,8 +956,7 @@ int number_of_candidates(NGList *keys, bool strict) {
       if (bngdickana.shift == 0UL && ((bngdickana.douji & keyset) == keyset)) {
         // シェ、チェは2キーでnoc=1になるが、3キー目を押していないので早期確定してはいけない
         // 編集モードがあるので、commaで「ん」と早期確定してはいけない
-        // if (keys->size < ..) { としたいが...
-        if (keyset == (B_M | B_R) || keyset == (B_M | B_G) || keyset == B_COMM) {
+        if (ngdickana[i].douji != keyset) {
           noc = 2;
         } else {
           noc++;
@@ -1037,7 +1033,7 @@ void ngh_JKF() { // 「{改行}
 }
 
 void ngh_JKG() { // ({改行}
-  ng_send_unicode_string_P(PSTR("("));
+  ng_send_unicode_string_P(PSTR("（"));
 }
 
 void ngh_JKZ() { // ――{改行}
@@ -1057,7 +1053,7 @@ void ngh_JKV() { // 」{改行}
 }
 
 void ngh_JKB() { // ){改行}
-  ng_send_unicode_string_P(PSTR(")"));
+  ng_send_unicode_string_P(PSTR("）"));
 }
 
 void ngh_DFY() { // {Home}
@@ -1141,7 +1137,6 @@ void ngh_MCQ() { // ｜{改行}
 
 void ngh_MCW() { // 　　　×　　　×　　　×{改行 2}
   ng_send_unicode_string_P(PSTR("　　　×　　　×　　　×"));
-  tap_code(KC_ENT);
   tap_code(KC_ENT);
 }
 
