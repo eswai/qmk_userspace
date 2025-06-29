@@ -728,7 +728,7 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
 
         // 前のキーとの同時押しの可能性があるなら前に足す
         // 同じキー連打を除外
-        if (nginput.size > 0 && a.elements[a.size - 1] != keycode && number_of_candidates(&b, false) > 0) {
+        if (nginput.size > 0 && a.elements[a.size - 1] != keycode && number_of_candidates(&b) > 0) {
           removeFromListArrayAt(&nginput, nginput.size - 1);
           addToListArray(&nginput, &b);
         // 前のキーと同時押しはない
@@ -743,7 +743,10 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
       
       // 連続シフト
       static const uint16_t rs[10][2] = {{NG_D, NG_F}, {NG_C, NG_V}, {NG_J, NG_K}, {NG_M, NG_COMM}, {NG_SHFT, 0}, {NG_SHFT2, 0}, {NG_F, 0}, {NG_V, 0}, {NG_J, 0}, {NG_M, 0}};
-
+      uint32_t keyset = 0UL;
+      for (int i = 0; i < nginput.elements[0].size; i++) {
+        keyset |= ng_key[nginput.elements[0].elements[i] - NG_Q];
+      }
       for (int i = 0; i < 10; i++) {
         NGList rskc;
         initializeList(&rskc);
@@ -763,13 +766,13 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
           addToList(&rskc, l.elements[j]);
         }
 
-        if (c <  0 && ((brs & pressed_keys) == brs) && number_of_candidates(&rskc, true) >  0) {
+        if (c <  0 && ((brs & pressed_keys) == brs) &&  (keyset & brs) != brs && number_of_matches(&rskc) >  0) {
           nginput.elements[nginput.size - 1] = rskc;
           break;
         }
       }
 
-      if (nginput.size > 1 || number_of_candidates(&(nginput.elements[0]), false) == 1) {
+      if (nginput.size > 1 || number_of_candidates(&(nginput.elements[0])) == 1) {
         ng_type(&(nginput.elements[0]));
         removeFromListArrayAt(&nginput, 0);
       }
@@ -790,7 +793,7 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
           removeFromListArrayAt(&nginput, 0);
         }
       } else {
-        if (nginput.size > 0 && number_of_candidates(&(nginput.elements[0]), false) == 1) {
+        if (nginput.size > 0 && number_of_candidates(&(nginput.elements[0])) == 1) {
           ng_type(&(nginput.elements[0]));
           removeFromListArrayAt(&nginput, 0);
         }
@@ -856,7 +859,76 @@ void ng_type(NGList *keys) {
   #endif
 }
 
-int number_of_candidates(NGList *keys, bool strict) {
+int number_of_matches(NGList *keys) {
+  #if defined(CONSOLE_ENABLE)
+    uprintf(">number_of_matches\n");
+  #endif
+  if (keys->size == 0) return 0;
+
+  naginata_kanamap bngdickana; // PROGMEM buffer
+  int nom = 0;
+
+  uint32_t keyset0 = 0UL;
+  uint32_t keyset1 = 0UL;
+  uint32_t keyset2 = 0UL;
+  switch (keys->size) {
+    case 1:
+      keyset0 = ng_key[keys->elements[0] - NG_Q];
+      for (int i = 0; i < sizeof ngdickana / sizeof bngdickana; i++) {
+        memcpy_P(&bngdickana, &ngdickana[i], sizeof(bngdickana));
+        if (bngdickana.shift == keyset0) {
+          nom++;
+        }
+        if (bngdickana.shift == 0UL && bngdickana.douji == keyset0) {
+          nom++;
+        }
+        if (nom > 1) break;
+      }
+      break;
+    case 2:
+      keyset0 = ng_key[keys->elements[0] - NG_Q];
+      keyset1 = ng_key[keys->elements[1] - NG_Q];
+      for (int i = 0; i < sizeof ngdickana / sizeof bngdickana; i++) {
+        memcpy_P(&bngdickana, &ngdickana[i], sizeof(bngdickana));
+        if (bngdickana.shift == (keyset0 | keyset1)) {
+          nom++;
+        }
+        if (bngdickana.shift == keyset0 && bngdickana.douji == keyset1) {
+          nom++;
+        }
+        if (bngdickana.shift == 0UL && bngdickana.douji == (keyset0 | keyset1)) {
+          nom++;
+        }
+        if (nom > 1) break;
+      }
+      break;
+    default:
+      keyset0 = ng_key[keys->elements[0] - NG_Q];
+      keyset1 = ng_key[keys->elements[1] - NG_Q];
+      keyset2 = ng_key[keys->elements[2] - NG_Q];
+      for (int i = 0; i < sizeof ngdickana / sizeof bngdickana; i++) {
+        memcpy_P(&bngdickana, &ngdickana[i], sizeof(bngdickana));
+        if (bngdickana.shift == (keyset0 | keyset1) && bngdickana.douji == keyset2) {
+          nom++;
+        }
+        if (bngdickana.shift == keyset0 && bngdickana.douji == (keyset1 | keyset2)) {
+          nom++;
+        }
+        if (bngdickana.shift == 0UL && bngdickana.douji == (keyset0 | keyset1 | keyset2)) {
+          nom++;
+        }
+        if (nom > 1) break;
+      }
+      break;
+  }
+
+  #if defined(CONSOLE_ENABLE)
+    uprintf("<number_of_matches nom=%u\n", nom);
+  #endif
+  return nom;
+}
+
+int number_of_candidates(NGList *keys) {
   #if defined(CONSOLE_ENABLE)
     uprintf(">number_of_candidates\n");
   #endif
@@ -864,115 +936,184 @@ int number_of_candidates(NGList *keys, bool strict) {
 
   naginata_kanamap bngdickana; // PROGMEM buffer
   int noc = 0;
-  static const uint16_t hrs[4][2] = {{NG_D, NG_F}, {NG_C, NG_V}, {NG_J, NG_K}, {NG_M, NG_COMM}};
 
-  if (strict) { // 完全一致
-    // シフトの単打
-    if (keys->size == 1 && (compareList0(keys, NG_SHFT) || compareList0(keys, NG_SHFT2))) {
-      return 1;
-    }
-    // シフト
-    if (keys->size > 1 && (compareList0(keys, NG_SHFT) || compareList0(keys, NG_SHFT2))) {
-      uint32_t keyset = 0UL;
-      for (int i = 1; i < keys->size; i++) {
-        keyset |= ng_key[keys->elements[i] - NG_Q];
-      }
+  uint32_t keyset0 = 0UL;
+  uint32_t keyset1 = 0UL;
+  uint32_t keyset2 = 0UL;
+  switch (keys->size) {
+    case 1:
+      keyset0 = ng_key[keys->elements[0] - NG_Q];
       for (int i = 0; i < sizeof ngdickana / sizeof bngdickana; i++) {
         memcpy_P(&bngdickana, &ngdickana[i], sizeof(bngdickana));
-        if (bngdickana.shift == B_SHFT && bngdickana.douji == keyset) {
+        if ((bngdickana.shift & keyset0) == keyset0) {
           noc++;
-          if (noc > 1) break;
         }
-      }
-      return noc;
-    }
-    // 編集モード
-    for (int j = 0; j < 4; j++) {
-      if (keys->size == 3 && compareList01(keys, hrs[j][0], hrs[j][1])) {
-        for (int i = 0; i < sizeof ngdickana / sizeof bngdickana; i++) {
-          memcpy_P(&bngdickana, &ngdickana[i], sizeof(bngdickana));
-          if (bngdickana.shift == (ng_key[hrs[j][0] - NG_Q] | ng_key[hrs[j][1] - NG_Q]) && bngdickana.douji == ng_key[keys->elements[2] - NG_Q]) {
-            return 1;
-          }
-        }
-      }
-    }
-    // 同時押し、単打
-    uint32_t keyset = 0UL;
-    for (int i = 0; i < keys->size; i++) {
-      keyset |= ng_key[keys->elements[i] - NG_Q];
-    }
-    for (int i = 0; i < sizeof ngdickana / sizeof bngdickana; i++) {
-      memcpy_P(&bngdickana, &ngdickana[i], sizeof(bngdickana));
-      if (bngdickana.shift == 0UL && bngdickana.douji == keyset) {
-        noc++;
-        if (noc > 1) break;
-      }
-    }
-    return noc;
-
-  } else { // 部分一致
-    // シフトの単打
-    if (keys->size == 1 && (compareList0(keys, NG_SHFT) || compareList0(keys, NG_SHFT2))) {
-      return 2;
-    }
-    // 編集モードの途中
-    if (keys->size == 2 && (compareList01(keys, NG_D, NG_F) || compareList01(keys, NG_C, NG_V) || compareList01(keys, NG_J, NG_K) || compareList01(keys, NG_M, NG_COMM))) {
-      return 2;
-    }
-    // シフトの途中
-    if (keys->size > 1 && (compareList0(keys, NG_SHFT) || compareList0(keys, NG_SHFT2))) {
-      uint32_t keyset = 0UL;
-      for (int i = 1; i < keys->size; i++) {
-        keyset |= ng_key[keys->elements[i] - NG_Q];
-      }
-      for (int i = 0; i < sizeof ngdickana / sizeof bngdickana; i++) {
-        memcpy_P(&bngdickana, &ngdickana[i], sizeof(bngdickana));
-        if (bngdickana.shift == B_SHFT && ((bngdickana.douji & keyset) == keyset)) {
-          noc++;
-          if (noc > 1) break;
-        }
-      }
-      return noc;
-    }
-    // 編集モード
-    for (int j = 0; j < 4; j++) {
-      if (keys->size == 3 && compareList01(keys, hrs[j][0], hrs[j][1])) {
-        for (int i = 0; i < sizeof ngdickana / sizeof bngdickana; i++) {
-          memcpy_P(&bngdickana, &ngdickana[i], sizeof(bngdickana));
-          if (bngdickana.shift == (ng_key[hrs[j][0] - NG_Q] | ng_key[hrs[j][1] - NG_Q]) && bngdickana.douji == ng_key[keys->elements[2] - NG_Q]) {
-            return 1;
-          }
-        }
-      }
-    }
-    // 同時押し、単打
-    uint32_t keyset = 0UL;
-    for (int i = 0; i < keys->size; i++) {
-      keyset |= ng_key[keys->elements[i] - NG_Q];
-    }
-    for (int i = 0; i < sizeof ngdickana / sizeof bngdickana; i++) {
-      memcpy_P(&bngdickana, &ngdickana[i], sizeof(bngdickana));
-      if (bngdickana.shift == 0UL && ((bngdickana.douji & keyset) == keyset)) {
-        // シェ、チェは2キーでnoc=1になるが、3キー目を押していないので早期確定してはいけない
-        // 編集モードがあるので、commaで「ん」と早期確定してはいけない
-        if (ngdickana[i].douji != keyset) {
-          noc = 2;
-        } else {
+        if (bngdickana.shift == 0UL && (bngdickana.douji & keyset0) == keyset0) {
           noc++;
         }
         if (noc > 1) break;
       }
-    }
-    return noc;
+      break;
+    case 2:
+      keyset0 = ng_key[keys->elements[0] - NG_Q];
+      keyset1 = ng_key[keys->elements[1] - NG_Q];
+      for (int i = 0; i < sizeof ngdickana / sizeof bngdickana; i++) {
+        memcpy_P(&bngdickana, &ngdickana[i], sizeof(bngdickana));
+        if (bngdickana.shift == (keyset0 | keyset1)) {
+          noc++;
+        }
+        if (bngdickana.shift == keyset0 && (bngdickana.douji & keyset1) == keyset1) {
+          noc++;
+        }
+        if (bngdickana.shift == 0UL && (bngdickana.douji & (keyset0 | keyset1)) == (keyset0 | keyset1)) {
+          noc++;
+        }
+        if (noc > 1) break;
+      }
+      break;
+    default:
+      keyset0 = ng_key[keys->elements[0] - NG_Q];
+      keyset1 = ng_key[keys->elements[1] - NG_Q];
+      keyset2 = ng_key[keys->elements[2] - NG_Q];
+      for (int i = 0; i < sizeof ngdickana / sizeof bngdickana; i++) {
+        memcpy_P(&bngdickana, &ngdickana[i], sizeof(bngdickana));
+        if (bngdickana.shift == (keyset0 | keyset1) && (bngdickana.douji & keyset2) == keyset2) {
+          noc++;
+        }
+        if (bngdickana.shift == keyset0 && (bngdickana.douji & (keyset1 | keyset2)) == (keyset1 | keyset2)) {
+          noc++;
+        }
+        if (bngdickana.shift == 0UL && (bngdickana.douji & (keyset0 | keyset1 | keyset2)) == (keyset0 | keyset1 | keyset2)) {
+          noc++;
+        }
+        if (noc > 1) break;
+      }
+      break;
   }
 
   #if defined(CONSOLE_ENABLE)
     uprintf("<number_of_candidates noc=%u\n", noc);
   #endif
-
   return noc;
 }
+
+// int number_of_candidates(NGList *keys, bool strict) {
+//   #if defined(CONSOLE_ENABLE)
+//     uprintf(">number_of_candidates\n");
+//   #endif
+//   if (keys->size == 0) return 0;
+
+//   naginata_kanamap bngdickana; // PROGMEM buffer
+//   int noc = 0;
+//   static const uint16_t hrs[4][2] = {{NG_D, NG_F}, {NG_C, NG_V}, {NG_J, NG_K}, {NG_M, NG_COMM}};
+
+//   if (strict) { // 完全一致
+//     // シフトの単打
+//     if (keys->size == 1 && (compareList0(keys, NG_SHFT) || compareList0(keys, NG_SHFT2))) {
+//       return 1;
+//     }
+//     // シフト
+//     if (keys->size > 1 && (compareList0(keys, NG_SHFT) || compareList0(keys, NG_SHFT2))) {
+//       uint32_t keyset = 0UL;
+//       for (int i = 1; i < keys->size; i++) {
+//         keyset |= ng_key[keys->elements[i] - NG_Q];
+//       }
+//       for (int i = 0; i < sizeof ngdickana / sizeof bngdickana; i++) {
+//         memcpy_P(&bngdickana, &ngdickana[i], sizeof(bngdickana));
+//         if (bngdickana.shift == B_SHFT && bngdickana.douji == keyset) {
+//           noc++;
+//           if (noc > 1) break;
+//         }
+//       }
+//       return noc;
+//     }
+//     // 編集モード
+//     for (int j = 0; j < 4; j++) {
+//       if (keys->size == 3 && compareList01(keys, hrs[j][0], hrs[j][1])) {
+//         for (int i = 0; i < sizeof ngdickana / sizeof bngdickana; i++) {
+//           memcpy_P(&bngdickana, &ngdickana[i], sizeof(bngdickana));
+//           if (bngdickana.shift == (ng_key[hrs[j][0] - NG_Q] | ng_key[hrs[j][1] - NG_Q]) && bngdickana.douji == ng_key[keys->elements[2] - NG_Q]) {
+//             return 1;
+//           }
+//         }
+//       }
+//     }
+//     // 同時押し、単打
+//     uint32_t keyset = 0UL;
+//     for (int i = 0; i < keys->size; i++) {
+//       keyset |= ng_key[keys->elements[i] - NG_Q];
+//     }
+//     for (int i = 0; i < sizeof ngdickana / sizeof bngdickana; i++) {
+//       memcpy_P(&bngdickana, &ngdickana[i], sizeof(bngdickana));
+//       if (bngdickana.shift == 0UL && bngdickana.douji == keyset) {
+//         noc++;
+//         if (noc > 1) break;
+//       }
+//     }
+//     return noc;
+
+//   } else { // 部分一致
+//     // シフトの単打
+//     if (keys->size == 1 && (compareList0(keys, NG_SHFT) || compareList0(keys, NG_SHFT2))) {
+//       return 2;
+//     }
+//     // 編集モードの途中
+//     if (keys->size == 2 && (compareList01(keys, NG_D, NG_F) || compareList01(keys, NG_C, NG_V) || compareList01(keys, NG_J, NG_K) || compareList01(keys, NG_M, NG_COMM))) {
+//       return 2;
+//     }
+//     // シフトの途中
+//     if (keys->size > 1 && (compareList0(keys, NG_SHFT) || compareList0(keys, NG_SHFT2))) {
+//       uint32_t keyset = 0UL;
+//       for (int i = 1; i < keys->size; i++) {
+//         keyset |= ng_key[keys->elements[i] - NG_Q];
+//       }
+//       for (int i = 0; i < sizeof ngdickana / sizeof bngdickana; i++) {
+//         memcpy_P(&bngdickana, &ngdickana[i], sizeof(bngdickana));
+//         if (bngdickana.shift == B_SHFT && ((bngdickana.douji & keyset) == keyset)) {
+//           noc++;
+//           if (noc > 1) break;
+//         }
+//       }
+//       return noc;
+//     }
+//     // 編集モード
+//     for (int j = 0; j < 4; j++) {
+//       if (keys->size == 3 && compareList01(keys, hrs[j][0], hrs[j][1])) {
+//         for (int i = 0; i < sizeof ngdickana / sizeof bngdickana; i++) {
+//           memcpy_P(&bngdickana, &ngdickana[i], sizeof(bngdickana));
+//           if (bngdickana.shift == (ng_key[hrs[j][0] - NG_Q] | ng_key[hrs[j][1] - NG_Q]) && bngdickana.douji == ng_key[keys->elements[2] - NG_Q]) {
+//             return 1;
+//           }
+//         }
+//       }
+//     }
+//     // 同時押し、単打
+//     uint32_t keyset = 0UL;
+//     for (int i = 0; i < keys->size; i++) {
+//       keyset |= ng_key[keys->elements[i] - NG_Q];
+//     }
+//     for (int i = 0; i < sizeof ngdickana / sizeof bngdickana; i++) {
+//       memcpy_P(&bngdickana, &ngdickana[i], sizeof(bngdickana));
+//       if (bngdickana.shift == 0UL && ((bngdickana.douji & keyset) == keyset)) {
+//         // シェ、チェは2キーでnoc=1になるが、3キー目を押していないので早期確定してはいけない
+//         // 編集モードがあるので、commaで「ん」と早期確定してはいけない
+//         if (ngdickana[i].douji != keyset) {
+//           noc = 2;
+//         } else {
+//           noc++;
+//         }
+//         if (noc > 1) break;
+//       }
+//     }
+//     return noc;
+//   }
+
+//   #if defined(CONSOLE_ENABLE)
+//     uprintf("<number_of_candidates noc=%u\n", noc);
+//   #endif
+
+//   return noc;
+// }
 
 void nofunc() {}
 

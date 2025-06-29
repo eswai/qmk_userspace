@@ -20,7 +20,8 @@
 
 void ng_type(NGList *);
 void naginata_clear(void);
-int number_of_candidates(NGList *, bool);
+int number_of_matches(NGList *);
+int number_of_candidates(NGList *);
 
 bool process_modifier(uint16_t, keyrecord_t *);
 
