@@ -1355,14 +1355,14 @@ void ng_left(uint8_t c) {
 }
 
 void ng_right(uint8_t c) {
-  tap_code(KC_RIGHT);
-  // for (uint8_t i = 0; i < c; i++) {
+  for (uint8_t i = 0; i < c; i++) {
+    tap_code(KC_RIGHT);
   //   if (naginata_config.tategaki) {
   //     tap_code(KC_RIGHT);
   //   } else {
   //     tap_code(KC_UP);
   //   }
-  // }
+  }
 }
 
 void ng_home() {
