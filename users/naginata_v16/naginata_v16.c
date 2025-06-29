@@ -906,6 +906,10 @@ static int count_kana_entries(NGList *keys, bool exact_match) {
           matches = (bngdickana.shift == (keyset0 | keyset1)) ||
                    (bngdickana.shift == keyset0 && (bngdickana.douji & keyset1) == keyset1) ||
                    (bngdickana.shift == 0UL && (bngdickana.douji & (keyset0 | keyset1)) == (keyset0 | keyset1));
+          // しぇ、ちぇ、など2キーで確定してはいけない
+          if (matches && (bngdickana.shift | bngdickana.douji) != (keyset0 | keyset1)) {
+            count = 2;
+          }
         }
         break;
       default:
