@@ -386,9 +386,7 @@ void set_naginata(uint8_t layer, uint16_t *onk, uint16_t *offk) {
   naginata_config.raw = eeconfig_read_user();
   if (naginata_config.os != NG_WIN && naginata_config.os != NG_MAC && naginata_config.os != NG_LINUX) {
     naginata_config.os = NG_WIN;
-    // naginata_config.live_conv = 1;
     naginata_config.tategaki = 1;
-    // naginata_config.kouchi_shift = 0;
     eeconfig_update_user(naginata_config.raw);
   }
   ng_set_unicode_mode(naginata_config.os);
@@ -439,20 +437,10 @@ void ng_set_unicode_mode(uint8_t os) {
   }
 }
 
-// void mac_live_conversion_toggle() {
-//   naginata_config.live_conv ^= 1;
-//   eeconfig_update_user(naginata_config.raw);
-// }
-
 void tategaki_toggle() {
   naginata_config.tategaki ^= 1;
   eeconfig_update_user(naginata_config.raw);
 }
-
-// void kouchi_shift_toggle() {
-//   naginata_config.kouchi_shift ^= 1;
-//   eeconfig_update_user(naginata_config.raw);
-// }
 
 void ng_show_os(void) {
   switch (naginata_config.os) {
@@ -461,11 +449,6 @@ void ng_show_os(void) {
       break;
     case NG_MAC:
       send_string("mac");
-      // if (naginata_config.live_conv) {
-      //   send_string("/:lc");
-      // } else {
-      //   send_string("/-lc");
-      // }
       break;
     case NG_LINUX:
       send_string("linux");
@@ -476,11 +459,6 @@ void ng_show_os(void) {
   } else {
     send_string("/yoko");
   }
-  // if (naginata_config.kouchi_shift) {
-  //   send_string("/:kouchi");
-  // } else {
-  //   send_string("/-kouchi");
-  // }
 }
 
 #define MAX_STRLEN 40
@@ -1128,18 +1106,18 @@ void ngh_MCW() { // 　　　×　　　×　　　×{改行 2}
 
 void ngh_MCE() { // {Home}{→}{End}{Del 2}{←}
   ng_home();
-  ng_right(1);
+  ng_prev_row();
   ng_end();
   tap_code(KC_DEL);
   tap_code(KC_DEL);
-  ng_left(1);
+  ng_next_row();
 }
 
 void ngh_MCR() { // {Home}{改行}{Space 1}{←}
   ng_home();
   tap_code(KC_ENT);
   tap_code(KC_SPC);
-  ng_left(1);
+  ng_next_row();
 }
 
 void ngh_MCT() { // 〇{改行}
@@ -1156,13 +1134,13 @@ void ngh_MCS() { // 【{改行}
 
 void ngh_MCD() { // {Home}{→}{End}{Del 4}{←}
   ng_home();
-  ng_right(1);
+  ng_prev_row();
   ng_end();
   tap_code(KC_DEL);
   tap_code(KC_DEL);
   tap_code(KC_DEL);
   tap_code(KC_DEL);
-  ng_left(1);
+  ng_next_row();
 }
 
 void ngh_MCF() { // {Home}{改行}{Space 3}{←}
@@ -1171,7 +1149,7 @@ void ngh_MCF() { // {Home}{改行}{Space 3}{←}
   tap_code(KC_SPC);
   tap_code(KC_SPC);
   tap_code(KC_SPC);
-  ng_left(1);
+  ng_next_row();
 }
 
 void ngh_MCG() { // {Space 3}
@@ -1325,48 +1303,93 @@ void ng_paste() {
   }
 }
 
+
 void ng_up(uint8_t c) {
-  for (uint8_t i = 0; i < c; i++) { // サイズ削減
+  for (uint8_t i = 0; i < c; i++) {
     tap_code(KC_UP);
-    // if (naginata_config.tategaki) {
-    //   tap_code(KC_UP);
-    // } else {
-    //   tap_code(KC_LEFT);
-    // }
   }
 }
 
 void ng_down(uint8_t c) {
   for (uint8_t i = 0; i < c; i++) {
     tap_code(KC_DOWN);
-    // if (naginata_config.tategaki) {
-    //   tap_code(KC_DOWN);
-    // } else {
-    //   tap_code(KC_RIGHT);
-    // }
   }
 }
 
 void ng_left(uint8_t c) {
   for (uint8_t i = 0; i < c; i++) {
     tap_code(KC_LEFT);
-    // if (naginata_config.tategaki) {
-    //   tap_code(KC_LEFT);
-    // } else {
-    //   tap_code(KC_DOWN);
-    // }
   }
 }
 
 void ng_right(uint8_t c) {
   for (uint8_t i = 0; i < c; i++) {
     tap_code(KC_RIGHT);
-  //   if (naginata_config.tategaki) {
-  //     tap_code(KC_RIGHT);
-  //   } else {
-  //     tap_code(KC_UP);
-  //   }
   }
+}
+
+void ng_prev_char() {
+  switch (naginata_config.os) {
+    case NG_WIN:
+    case NG_LINUX:
+      if (naginata_config.tategaki) {
+        ng_up(1);
+      } else {
+        ng_left(1);
+      }
+      return;
+    case NG_MAC:
+      tap_code16(LCTL(KC_B));
+      return;
+    }
+}
+
+void ng_next_char() {
+  switch (naginata_config.os) {
+    case NG_WIN:
+    case NG_LINUX:
+      if (naginata_config.tategaki) {
+        ng_down(1);
+      } else {
+        ng_right(1);
+      }
+      return;
+    case NG_MAC:
+      tap_code16(LCTL(KC_F));
+      return;
+    }
+}
+
+void ng_next_row() {
+  switch (naginata_config.os) {
+    case NG_WIN:
+    case NG_LINUX:
+      if (naginata_config.tategaki) {
+        ng_left(1);
+      } else {
+        ng_down(1);
+      }
+      return;
+    case NG_MAC:
+      tap_code16(LCTL(KC_N));
+      return;
+    }
+}
+
+void ng_prev_row() {
+  switch (naginata_config.os) {
+    case NG_WIN:
+    case NG_LINUX:
+      if (naginata_config.tategaki) {
+        ng_right(1);
+      } else {
+        ng_up(1);
+      }
+      return;
+    case NG_MAC:
+      tap_code16(LCTL(KC_P));
+      return;
+    }
 }
 
 void ng_home() {

@@ -50,6 +50,10 @@ void ng_up(uint8_t);
 void ng_down(uint8_t);
 void ng_left(uint8_t);
 void ng_right(uint8_t);
+void ng_prev_row(void);
+void ng_next_row(void);
+void ng_prev_char(void);
+void ng_next_char(void);
 void ng_home(void);
 void ng_end(void);
 void ng_katakana(void);
@@ -185,9 +189,7 @@ typedef union {
   uint32_t raw;
   struct {
     uint8_t os;
-    // bool live_conv :1;
     bool tategaki :1;
-    // bool kouchi_shift :1;
   };
 } user_config_t;
 
