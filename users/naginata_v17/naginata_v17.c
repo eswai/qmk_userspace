@@ -143,8 +143,8 @@ const PROGMEM naginata_kanamap ngdickana[] = {
   {.shift = 0UL        , .douji = B_D             , .kana = "to"     , .func = nofunc }, // と
   {.shift = 0UL        , .douji = B_M             , .kana = "na"     , .func = nofunc }, // な
   {.shift = B_SHFT     , .douji = B_D             , .kana = "ni"     , .func = nofunc }, // に
-  {.shift = B_SHFT     , .douji = B_W             , .kana = "nu"     , .func = nofunc }, // ぬ
-  {.shift = B_SHFT     , .douji = B_COMM          , .kana = "ne"     , .func = nofunc }, // ね
+  {.shift = B_SHFT     , .douji = B_B             , .kana = "nu"     , .func = nofunc }, // ぬ
+  {.shift = B_SHFT     , .douji = B_R             , .kana = "ne"     , .func = nofunc }, // ね
   {.shift = B_SHFT     , .douji = B_J             , .kana = "no"     , .func = nofunc }, // の
   {.shift = 0UL        , .douji = B_C             , .kana = "ha"     , .func = nofunc }, // は
   {.shift = 0UL        , .douji = B_X             , .kana = "hi"     , .func = nofunc }, // ひ
@@ -155,8 +155,8 @@ const PROGMEM naginata_kanamap ngdickana[] = {
   {.shift = B_SHFT     , .douji = B_Z             , .kana = "ho"     , .func = nofunc }, // ほ
   {.shift = B_SHFT     , .douji = B_F             , .kana = "ma"     , .func = nofunc }, // ま
   {.shift = B_SHFT     , .douji = B_S             , .kana = "mi"     , .func = nofunc }, // み
-  {.shift = B_SHFT     , .douji = B_B             , .kana = "mu"     , .func = nofunc }, // む
-  {.shift = B_SHFT     , .douji = B_R             , .kana = "me"     , .func = nofunc }, // め
+  {.shift = B_SHFT     , .douji = B_COMM          , .kana = "mu"     , .func = nofunc }, // む
+  {.shift = B_SHFT     , .douji = B_W             , .kana = "me"     , .func = nofunc }, // め
   {.shift = B_SHFT     , .douji = B_K             , .kana = "mo"     , .func = nofunc }, // も
   {.shift = B_SHFT     , .douji = B_H             , .kana = "ya"     , .func = nofunc }, // や
   {.shift = B_SHFT     , .douji = B_P             , .kana = "yu"     , .func = nofunc }, // ゆ
@@ -329,7 +329,7 @@ const PROGMEM naginata_kanamap ngdickana[] = {
   {.shift = B_D|B_F    , .douji = B_U     , .kana = "" , .func = ngh_DFU    }, // +{End}{BS}
   {.shift = B_D|B_F    , .douji = B_I     , .kana = "" , .func = ngh_DFI    }, // {vk1Csc079}
   {.shift = B_D|B_F    , .douji = B_O     , .kana = "" , .func = ngh_DFO    }, // {Del}
-  {.shift = B_D|B_F    , .douji = B_P     , .kana = "" , .func = ngh_DFP    }, // +{Esc 2}
+  {.shift = B_D|B_F    , .douji = B_P     , .kana = "" , .func = ngh_DFP    }, // +{Esc 3}
   {.shift = B_D|B_F    , .douji = B_H     , .kana = "" , .func = ngh_DFH    }, // {Enter}{End}
   {.shift = B_D|B_F    , .douji = B_J     , .kana = "" , .func = ngh_DFJ    }, // {↑}
   {.shift = B_D|B_F    , .douji = B_K     , .kana = "" , .func = ngh_DFK    }, // +{↑}
@@ -340,21 +340,21 @@ const PROGMEM naginata_kanamap ngdickana[] = {
   {.shift = B_D|B_F    , .douji = B_COMM  , .kana = "" , .func = ngh_DFCOMM }, // +{↓}
   {.shift = B_D|B_F    , .douji = B_DOT   , .kana = "" , .func = ngh_DFDOT  }, // +{↓ 7}
   {.shift = B_D|B_F    , .douji = B_SLSH  , .kana = "" , .func = ngh_DFSLSH }, // ^u
-  {.shift = B_M|B_COMM , .douji = B_Q     , .kana = "" , .func = ngh_MCQ }, // ｜{改行}
-  {.shift = B_M|B_COMM , .douji = B_W     , .kana = "" , .func = ngh_MCW }, // 　　　×　　　×　　　×{改行 2}
-  {.shift = B_M|B_COMM , .douji = B_E     , .kana = "" , .func = ngh_MCE }, // {Home}{→}{End}{Del 2}{←}
-  {.shift = B_M|B_COMM , .douji = B_R     , .kana = "" , .func = ngh_MCR }, // {Home}{改行}{Space 1}{←}
-  {.shift = B_M|B_COMM , .douji = B_T     , .kana = "" , .func = ngh_MCT }, // 〇{改行}
-  {.shift = B_M|B_COMM , .douji = B_A     , .kana = "" , .func = ngh_MCA }, // 《{改行}
-  {.shift = B_M|B_COMM , .douji = B_S     , .kana = "" , .func = ngh_MCS }, // 【{改行}
-  {.shift = B_M|B_COMM , .douji = B_D     , .kana = "" , .func = ngh_MCD }, // {Home}{→}{End}{Del 4}{←}
-  {.shift = B_M|B_COMM , .douji = B_F     , .kana = "" , .func = ngh_MCF }, // {Home}{改行}{Space 3}{←}
-  {.shift = B_M|B_COMM , .douji = B_G     , .kana = "" , .func = ngh_MCG }, // {Space 3}
-  {.shift = B_M|B_COMM , .douji = B_Z     , .kana = "" , .func = ngh_MCZ }, // 》{改行}
-  {.shift = B_M|B_COMM , .douji = B_X     , .kana = "" , .func = ngh_MCX }, // 】{改行}
-  {.shift = B_M|B_COMM , .douji = B_C     , .kana = "" , .func = ngh_MCC }, // 」{改行}{改行}
-  {.shift = B_M|B_COMM , .douji = B_V     , .kana = "" , .func = ngh_MCV }, // 」{改行}{改行}「{改行}
-  {.shift = B_M|B_COMM , .douji = B_B     , .kana = "" , .func = ngh_MCB }, // 」{改行}{改行}{Space}
+  {.shift = B_M|B_COMM , .douji = B_Q     , .kana = "" , .func = ngh_MCQ    }, // ｜{改行}
+  {.shift = B_M|B_COMM , .douji = B_W     , .kana = "" , .func = ngh_MCW    }, // 　　　×　　　×　　　×{改行 2}
+  {.shift = B_M|B_COMM , .douji = B_E     , .kana = "" , .func = ngh_MCE    }, // {Home}{→}{End}{Del 2}{←}
+  {.shift = B_M|B_COMM , .douji = B_R     , .kana = "" , .func = ngh_MCR    }, // {Home}{改行}{Space 1}{←}
+  {.shift = B_M|B_COMM , .douji = B_T     , .kana = "" , .func = ngh_MCT    }, // 〇{改行}
+  {.shift = B_M|B_COMM , .douji = B_A     , .kana = "" , .func = ngh_MCA    }, // 《{改行}
+  {.shift = B_M|B_COMM , .douji = B_S     , .kana = "" , .func = ngh_MCS    }, // 【{改行}
+  {.shift = B_M|B_COMM , .douji = B_D     , .kana = "" , .func = ngh_MCD    }, // {Home}{→}{End}{Del 4}{←}
+  {.shift = B_M|B_COMM , .douji = B_F     , .kana = "" , .func = ngh_MCF    }, // {Home}{改行}{Space 3}{←}
+  {.shift = B_M|B_COMM , .douji = B_G     , .kana = "" , .func = ngh_MCG    }, // {Space 3}
+  {.shift = B_M|B_COMM , .douji = B_Z     , .kana = "" , .func = ngh_MCZ    }, // 》{改行}
+  {.shift = B_M|B_COMM , .douji = B_X     , .kana = "" , .func = ngh_MCX    }, // 】{改行}
+  {.shift = B_M|B_COMM , .douji = B_C     , .kana = "" , .func = ngh_MCC    }, // 」{改行}{改行}
+  {.shift = B_M|B_COMM , .douji = B_V     , .kana = "" , .func = ngh_MCV    }, // 」{改行}{改行}「{改行}
+  {.shift = B_M|B_COMM , .douji = B_B     , .kana = "" , .func = ngh_MCB    }, // 」{改行}{改行}{Space}
   {.shift = B_C|B_V    , .douji = B_Y     , .kana = "" , .func = ngh_CVY    }, // +{Home}
   {.shift = B_C|B_V    , .douji = B_U     , .kana = "" , .func = ngh_CVU    }, // ^x
   {.shift = B_C|B_V    , .douji = B_I     , .kana = "" , .func = ngh_CVI    }, // {vk1Csc079}
@@ -363,13 +363,13 @@ const PROGMEM naginata_kanamap ngdickana[] = {
   {.shift = B_C|B_V    , .douji = B_H     , .kana = "" , .func = ngh_CVH    }, // ^c
   {.shift = B_C|B_V    , .douji = B_J     , .kana = "" , .func = ngh_CVJ    }, // {←}
   {.shift = B_C|B_V    , .douji = B_K     , .kana = "" , .func = ngh_CVK    }, // {→}
-  {.shift = B_C|B_V    , .douji = B_L     , .kana = "" , .func = ngh_CVL    }, // {改行}{Space}+{Home}^x{BS}
-  {.shift = B_C|B_V    , .douji = B_SCLN  , .kana = "" , .func = ngh_CVSCLN }, // ^y
+  {.shift = B_C|B_V    , .douji = B_L     , .kana = "" , .func = ngh_CVL    }, // +{← 7}
+  {.shift = B_C|B_V    , .douji = B_SCLN  , .kana = "" , .func = ngh_CVSCLN }, // +{→ 7}
   {.shift = B_C|B_V    , .douji = B_N     , .kana = "" , .func = ngh_CVN    }, // +{End}
   {.shift = B_C|B_V    , .douji = B_M     , .kana = "" , .func = ngh_CVM    }, // +{←}
   {.shift = B_C|B_V    , .douji = B_COMM  , .kana = "" , .func = ngh_CVCOMM }, // +{→}
-  {.shift = B_C|B_V    , .douji = B_DOT   , .kana = "" , .func = ngh_CVDOT  }, // +{← 7}
-  {.shift = B_C|B_V    , .douji = B_SLSH  , .kana = "" , .func = ngh_CVSLSH }, // +{→ 7}
+  {.shift = B_C|B_V    , .douji = B_DOT   , .kana = "" , .func = ngh_CVDOT  }, // {End}+{Home}
+  {.shift = B_C|B_V    , .douji = B_SLSH  , .kana = "" , .func = ngh_CVSLSH }, // ^y
 
 };
 
@@ -632,18 +632,6 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
   // OS切り替え(UNICODE出力)
   if (record->event.pressed) {
     switch (keycode) {
-      // case NG_ON:
-      //   naginata_on();
-      //   return false;
-      //   break;
-      // case NG_OFF:
-      //   naginata_off();
-      //   return false;
-      //   break;
-      // case NG_CLR:
-      //   naginata_clear();
-      //   return false;
-      //   break;
       case NGSW_WIN:
         switchOS(NG_WIN);
         return false;
@@ -656,10 +644,6 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
         switchOS(NG_LINUX);
         return false;
         break;
-      // case NG_MLV:
-      //   mac_live_conversion_toggle();
-      //   return false;
-      //   break;
       case NG_SHOS:
         ng_show_os();
         return false;
@@ -668,10 +652,6 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
         tategaki_toggle();
         return false;
         break;
-      // case NG_KOTI:
-      //   kouchi_shift_toggle();
-      //   return false;
-      //   break;
     }
   }
 
@@ -1217,18 +1197,16 @@ void ngh_CVK() { // {→}
   ng_right(1);
 }
 
-void ngh_CVL() { // {改行}{Space}+{Home}^x{BS}
-  tap_code(KC_ENT);
-  tap_code(KC_SPC);
+void ngh_CVL() { // +{← 7}
   register_code(KC_LSFT);
-  ng_home();
+  ng_left(7);
   unregister_code(KC_LSFT);
-  ng_cut();
-  tap_code(KC_BSPC);
 }
 
-void ngh_CVSCLN() { // ^y
-  ng_redo();
+void ngh_CVSCLN() { // +{→ 7}
+  register_code(KC_LSFT);
+  ng_right(7);
+  unregister_code(KC_LSFT);
 }
 
 void ngh_CVN() { // +{End}
@@ -1249,16 +1227,15 @@ void ngh_CVCOMM() { // +{→}
   unregister_code(KC_LSFT);
 }
 
-void ngh_CVDOT() { // +{← 7}
+void ngh_CVDOT() { // {End}+{Home}
+  ng_end();
   register_code(KC_LSFT);
-  ng_left(7);
+  ng_home();
   unregister_code(KC_LSFT);
 }
 
-void ngh_CVSLSH() { // +{→ 7}
-  register_code(KC_LSFT);
-  ng_right(7);
-  unregister_code(KC_LSFT);
+void ngh_CVSLSH() { // ^y
+  ng_redo();
 }
 
 
