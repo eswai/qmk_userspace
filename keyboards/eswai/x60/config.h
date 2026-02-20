@@ -20,22 +20,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 // #define MANUFACTURER    eswai
 // #define PRODUCT         X60
 
-#define MATRIX_ROWS 5
-#define MATRIX_COLS 14
-
-#define MATRIX_ROW_PINS { B6, B5, B4, D7, E6 }
-#define MATRIX_COL_PINS { D2, D1, D3, D5, D4, D6, C6, F0, F1, F4, F5, F6, F7, C7}
-// #define UNUSED_PINS
-
-#define DIODE_DIRECTION COL2ROW
-
-/* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
-#define DEBOUNCE 5
-
-/* define if matrix has ghost (lacks anti-ghosting diodes) */
-//#define MATRIX_HAS_GHOST
-
-/* number of backlight levels */
+// Matrix/diode/debounce are defined in keyboard.json
 
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
 // #define LOCKING_SUPPORT_ENABLE

@@ -24,43 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // #define MANUFACTURER eswai
 // #define PRODUCT      742
 
-/* key matrix size */
-#define MATRIX_ROWS 8
-#define MATRIX_COLS 7
-
-/*
- * Keyboard Matrix Assignments
- *
- * Change this to how you wired your keyboard
- * COLS: AVR pins used for columns, left to right
- * ROWS: AVR pins used for rows, top to bottom
- * DIODE_DIRECTION: COL2ROW = COL = Anode (+), ROW = Cathode (-, marked on diode)
- *                  ROW2COL = ROW = Anode (+), COL = Cathode (-, marked on diode)
- *
- */
-#define MATRIX_ROW_PINS { B5, B4, E6, D7 }
-#define MATRIX_COL_PINS { F5, F6, F7, B1, B3, B2, B6 }
-// #define UNUSED_PINS
-
-/* COL2ROW, ROW2COL */
-#define DIODE_DIRECTION COL2ROW
-
-/*
- * Split Keyboard specific options, make sure you have 'SPLIT_KEYBOARD = yes' in your rules.mk, and define SOFT_SERIAL_PIN.
- */
-#define USE_SERIAL
-#define SOFT_SERIAL_PIN D2  // or D1, D2, D3, E6
-#define SPLIT_USB_DETECT
-#define MASTER_LEFT
-
-#define SPLIT_USB_DETECT
-#define SPLIT_USB_TIMEOUT 1000
-
-/* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
-#define DEBOUNCE 5
-
-/* define if matrix has ghost (lacks anti-ghosting diodes) */
-//#define MATRIX_HAS_GHOST
+/* Matrix/diode/debounce are defined in keyboard.json */
 
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
 #define LOCKING_SUPPORT_ENABLE
