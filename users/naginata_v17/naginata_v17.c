@@ -702,8 +702,8 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
       // 連続シフト
       static const uint16_t rs[10][2] = {{NG_D, NG_F}, {NG_C, NG_V}, {NG_J, NG_K}, {NG_M, NG_COMM}, {NG_SHFT, 0}, {NG_SHFT2, 0}, {NG_F, 0}, {NG_V, 0}, {NG_J, 0}, {NG_M, 0}};
       uint32_t keyset = 0UL;
-      for (int i = 0; i < nginput.elements[0].size; i++) {
-        keyset |= ng_key[nginput.elements[0].elements[i] - NG_Q];
+      for (int i = 0; i < nginput.elements[nginput.size - 1].size; i++) {
+        keyset |= ng_key[nginput.elements[nginput.size - 1].elements[i] - NG_Q];
       }
       for (int i = 0; i < 10; i++) {
         NGList rskc;
