@@ -7,26 +7,12 @@ void initializeListArray(NGListArray *list) {
 
 // 要素を集合に追加する関数
 bool addToListArray(NGListArray *list, NGList *element) {
-    if (list->size >= LIST_SIZE) {
+    if (list->size >= LIST_ARRAY_SIZE) {
         return false;
     }
 
     // 集合に要素を追加
     list->elements[list->size++] = *element;
-    return true;
-}
-
-bool addToListArrayAt(NGListArray *list, NGList *element, int idx) {
-    if (list->size >= LIST_SIZE) {
-        return false;
-    }
-    for (int i = list->size; i > idx; i--) {
-        list->elements[i] = list->elements[i - 1];
-    }
-    // 集合に要素を追加
-    list->elements[idx] = *element;
-    list->size++;
-
     return true;
 }
 

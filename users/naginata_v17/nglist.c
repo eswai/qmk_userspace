@@ -16,20 +16,6 @@ bool addToList(NGList *list, uint16_t element) {
     return true;
 }
 
-// bool addToListAt(NGList *list, uint16_t element, int idx) {
-//     if (list->size >= LIST_SIZE) {
-//         return false;
-//     }
-//     for (int i = idx; i < list->size; i++) {
-//         list->elements[i + i] = list->elements[i];
-//     }
-//     // 集合に要素を追加
-//     list->elements[idx] = element;
-//     list->size++;
-
-//     return true;
-// }
-
 int includeList(NGList *list, uint16_t element) {
     // 要素のインデックスを見つける
     for (int i = 0; i < list->size; i++) {
@@ -47,33 +33,4 @@ void copyList(NGList *a, NGList *b) {
     for (int i = 0; i < a->size; i++) {
         addToList(b, a->elements[i]);
     }
-}
-
-// 集合から要素を削除する関数
-bool removeFromListAt(NGList *list, int idx) {
-    // 修正: 空リストでsizeが負になるのを防ぐガードを追加
-    //       (removeFromListArrayAtと挙動をそろえる)
-    if (list->size <= 0) {
-        return false;
-    }
-    // 要素を削除して集合を再構築
-    for (int i = idx; i < list->size - 1; i++) {
-        list->elements[i] = list->elements[i + 1];
-    }
-    list->size--;
-    return true;
-}
-
-bool compareList0(NGList *list, uint16_t a) {
-    if (list->elements[0] == a)
-        return true;
-    else
-        return false;
-}
-
-bool compareList01(NGList *list, uint16_t a, uint16_t b) {
-    if ((list->elements[0] == a && list->elements[1] == b) || (list->elements[0] == b && list->elements[1] == a))
-        return true;
-    else
-        return false;
 }
