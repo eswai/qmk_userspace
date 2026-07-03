@@ -20,8 +20,8 @@ bool addToListArrayAt(NGListArray *list, NGList *element, int idx) {
     if (list->size >= LIST_SIZE) {
         return false;
     }
-    for (int i = idx; i < list->size; i++) {
-        list->elements[i + i] = list->elements[i];
+    for (int i = list->size; i > idx; i--) {
+        list->elements[i] = list->elements[i - 1];
     }
     // 集合に要素を追加
     list->elements[idx] = *element;

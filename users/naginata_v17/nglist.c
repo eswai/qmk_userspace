@@ -51,6 +51,11 @@ void copyList(NGList *a, NGList *b) {
 
 // 集合から要素を削除する関数
 bool removeFromListAt(NGList *list, int idx) {
+    // 修正: 空リストでsizeが負になるのを防ぐガードを追加
+    //       (removeFromListArrayAtと挙動をそろえる)
+    if (list->size <= 0) {
+        return false;
+    }
     // 要素を削除して集合を再構築
     for (int i = idx; i < list->size - 1; i++) {
         list->elements[i] = list->elements[i + 1];

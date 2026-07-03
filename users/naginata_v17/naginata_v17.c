@@ -21,6 +21,9 @@
 
 #include <string.h>
 
+// 修正: naginata.hはextern宣言のみになったので、実体はここで定義する
+user_config_t naginata_config;
+
 static bool is_naginata = false; // 薙刀式がオンかオフか
 static uint8_t naginata_layer = 0; // NG_*を配置しているレイヤー番号
 static uint16_t ngon_keys[2]; // 薙刀式をオンにするキー(通常HJ)
@@ -463,8 +466,10 @@ void ng_show_os(void) {
 
 #define MAX_STRLEN 40
 void ng_send_unicode_string_P(const char *pstr) {
+  // 修正: 終端NUL分の1バイトを確保。以前はstr[MAX_STRLEN]でlen==MAX_STRLENの
+  //       ときにstrcpy_Pがスタックを1バイト破壊していた
   if (strlen_P(pstr) > MAX_STRLEN) return;
-  char str[MAX_STRLEN];
+  char str[MAX_STRLEN + 1];
   strcpy_P(str, pstr);
 
   switch (naginata_config.os) {
@@ -552,7 +557,8 @@ bool enable_naginata(uint16_t keycode, keyrecord_t *record) {
         return false;
       // ２キー目はかなオンキーではない
       } else {
-        tap_code(fghj_buf); // 1キー目を出力
+        // 修正: fghj_bufが0のときtap_code(KC_NO)を送らないようガード
+        if (fghj_buf > 0) tap_code(fghj_buf); // 1キー目を出力
         fghj_buf = 0;
         nkeypress = 0;
         return true; // 2キー目はQMKにまかせる
@@ -801,6 +807,8 @@ void ng_type(NGList *keys) {
   // JIみたいにJIを含む同時押しはたくさんあるが、JIのみの同時押しがないとき
   // 最後の１キーを別に分けて変換する
   if (!ftype) {
+    // 修正: 1キーで一致しない場合はこれ以上分割できないので打ち切る。
+    if (keys->size <= 1) return;
     NGList a, b;
     initializeList(&a);
     initializeList(&b);
@@ -1019,8 +1027,9 @@ void ngh_DFO() { // {Del}
   tap_code(KC_DEL);
 }
 
-void ngh_DFP() { // +{Esc 2}
+void ngh_DFP() { // +{Esc 3}
   register_code(KC_LSFT);
+  tap_code(KC_ESC);
   tap_code(KC_ESC);
   tap_code(KC_ESC);
   unregister_code(KC_LSFT);
