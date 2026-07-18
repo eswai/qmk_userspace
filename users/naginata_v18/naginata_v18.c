@@ -31,6 +31,9 @@ static uint16_t ngoff_keys[2]; // 薙刀式をオフにするキー(通常FG)
 static NGListArray nginput;
 static uint32_t pressed_keys; // 押しているキーのビットをたてる
 static int8_t n_pressed_keys; // 押しているキーの数
+static uint16_t last_press_time; // 最後に押した文字キーの押下時刻
+static uint16_t last_pressed_kc; // 最後に押した文字キーのキーコード
+static bool defer_flush; // 候補1件の確定出力をNG_MIN_OVERLAP_MS経過まで保留中
 
 // 31キーを32bitの各ビットに割り当てる
 #define B_Q    (1UL<<0)
@@ -590,6 +593,9 @@ void naginata_clear(void) {
   fghj_buf = 0;
   pressed_keys = 0;
   n_pressed_keys = 0;
+  last_press_time = 0;
+  last_pressed_kc = 0;
+  defer_flush = false;
 }
 
 // 薙刀式の入力処理
@@ -664,6 +670,8 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
         addToList(&a, keycode);
         addToListArray(&nginput, &a);
       } else {
+        last_pressed_kc = keycode;
+        last_press_time = record->event.time;
         NGList a;
         NGList b;
         if (nginput.size > 0) {
@@ -718,9 +726,26 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
         }
       }
 
-      if (nginput.size > 1 || number_of_candidates(&(nginput.elements[0])) == 1) {
+      if (nginput.size > 1) {
         ng_type(&(nginput.elements[0]));
         removeFromListArrayAt(&nginput, 0);
+        defer_flush = false;
+      } else if (number_of_candidates(&(nginput.elements[0])) == 1) {
+        // 文字キー同士の結合は、重なり時間が閾値未満なら個別打鍵に分割される
+        // 可能性があるため、確定出力を保留する(naginata_taskで閾値経過後に出力)。
+        // シフトキーとの結合は分割対象外なので従来通り即出力する
+        int n_moji = 0;
+        for (int i = 0; i < nginput.elements[0].size; i++) {
+          if (nginput.elements[0].elements[i] != NG_SHFT && nginput.elements[0].elements[i] != NG_SHFT2) {
+            n_moji++;
+          }
+        }
+        if (NG_MIN_OVERLAP_MS > 0 && n_moji >= 2) {
+          defer_flush = true;
+        } else {
+          ng_type(&(nginput.elements[0]));
+          removeFromListArrayAt(&nginput, 0);
+        }
       }
 
       #if defined(CONSOLE_ENABLE)
@@ -731,6 +756,31 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
       #if defined(CONSOLE_ENABLE)
           uprintf(">process_naginata released=%u nginput.size=%u\n", keycode, nginput.size);
       #endif
+
+      // 先に押していた文字キーが、後から押した文字キーとの重なり閾値未満で
+      // 離された場合(ロールオーバー)、同時押しではなく個別打鍵として分割する
+      if (NG_MIN_OVERLAP_MS > 0 && nginput.size > 0 &&
+          keycode != NG_SHFT && keycode != NG_SHFT2) {
+        NGList *last = &(nginput.elements[nginput.size - 1]);
+        if (last->size >= 2 &&
+            keycode != last_pressed_kc &&
+            last->elements[last->size - 1] == last_pressed_kc &&
+            includeList(last, keycode) >= 0 &&
+            TIMER_DIFF_16(record->event.time, last_press_time) < NG_MIN_OVERLAP_MS) {
+          last->size--; // 末尾(最後に押したキー)を外し、独立要素として追加
+          NGList e;
+          initializeList(&e);
+          addToList(&e, last_pressed_kc);
+          addToListArray(&nginput, &e);
+          defer_flush = false;
+          // 分割により手前の要素はこれ以上結合されないので確定出力する
+          while (nginput.size > 1) {
+            ng_type(&(nginput.elements[0]));
+            removeFromListArrayAt(&nginput, 0);
+          }
+        }
+      }
+
       pressed_keys &= ~ng_key[keycode - NG_Q]; // キーの重ね合わせ
 
       if (pressed_keys == 0UL) {
@@ -738,10 +788,12 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
           ng_type(&(nginput.elements[0]));
           removeFromListArrayAt(&nginput, 0);
         }
+        defer_flush = false;
       } else {
         if (nginput.size > 0 && number_of_candidates(&(nginput.elements[0])) == 1) {
           ng_type(&(nginput.elements[0]));
           removeFromListArrayAt(&nginput, 0);
+          defer_flush = false;
         }
       }
 
@@ -753,6 +805,21 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
   }
 
   return true;
+}
+
+// 保留中の確定出力を、重なり閾値の経過後に行う(キーイベント外のタイマー処理)
+void naginata_task(void) {
+  if (defer_flush && timer_elapsed(last_press_time) >= NG_MIN_OVERLAP_MS) {
+    defer_flush = false;
+    if (nginput.size > 0 && number_of_candidates(&(nginput.elements[0])) == 1) {
+      ng_type(&(nginput.elements[0]));
+      removeFromListArrayAt(&nginput, 0);
+    }
+  }
+}
+
+void housekeeping_task_user(void) {
+  naginata_task();
 }
 
 // キー入力を文字に変換して出力する

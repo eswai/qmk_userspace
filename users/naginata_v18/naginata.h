@@ -37,6 +37,7 @@ void tategaki_toggle(void);
 // void kouchi_shift_toggle(void);
 
 bool process_naginata(uint16_t, keyrecord_t *);
+void naginata_task(void);
 // void set_naginata(uint8_t);
 void set_naginata(uint8_t, uint16_t *, uint16_t *);
 void ng_send_unicode_string_P(const char *);
@@ -199,6 +200,11 @@ extern user_config_t naginata_config;
 
 // 修正: 展開時の演算順序事故を防ぐため括弧で囲む
 #define NG_SAFE_RANGE (SAFE_RANGE + 42)
+
+// 重なり時間がこの値(ms)未満なら同時押しではなく個別打鍵と判定する。0で無効(従来動作)
+#ifndef NG_MIN_OVERLAP_MS
+#define NG_MIN_OVERLAP_MS 50
+#endif
 
 #define NG_WIN 1
 #define NG_MAC 2
