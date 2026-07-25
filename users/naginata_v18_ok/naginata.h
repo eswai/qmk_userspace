@@ -15,15 +15,17 @@
  */
 
 #pragma once
-#include "nglist.h"
-#include "nglistarray.h"
+#include QMK_KEYBOARD_H
 
-void ng_type(NGList *);
-void naginata_clear(void);
-int number_of_matches(NGList *);
-int number_of_candidates(NGList *);
+// キーマップから使う関数
+// (かな変換・カーソル操作などの内部関数はnaginata_v18.c内でstaticにしている)
 
-bool process_modifier(uint16_t, keyrecord_t *);
+// 薙刀式レイヤーとオン/オフキーを設定する。keyboard_post_init_userから呼ぶ
+void set_naginata(uint8_t, uint16_t *, uint16_t *);
+// process_record_userから呼ぶ。falseを返したらキー入力を消費済み
+bool process_naginata(uint16_t, keyrecord_t *);
+// 保留中の出力を確定させる。naginata_v18.cのhousekeeping_task_userから呼ばれる
+void naginata_task(void);
 
 void naginata_on(void);
 void naginata_off(void);
@@ -32,170 +34,17 @@ bool naginata_state(void);
 void switchOS(uint8_t);
 void ng_set_unicode_mode(uint8_t);
 void ng_show_os(void);
-// void mac_live_conversion_toggle(void);
 void tategaki_toggle(void);
-// void kouchi_shift_toggle(void);
 
-bool process_naginata(uint16_t, keyrecord_t *);
-void naginata_task(void);
-// void set_naginata(uint8_t);
-void set_naginata(uint8_t, uint16_t *, uint16_t *);
-void ng_send_unicode_string_P(const char *);
-
-void nofunc(void);
-
-void ng_cut(void);
-void ng_copy(void);
-void ng_paste(void);
-void ng_up(uint8_t);
-void ng_down(uint8_t);
-void ng_left(uint8_t);
-void ng_right(uint8_t);
-void ng_prev_row(void);
-void ng_next_row(void);
+// 縦書き/横書きを見て動く論理カーソル移動(薙刀式本体は使っていない)
 void ng_prev_char(void);
 void ng_next_char(void);
-void ng_home(void);
-void ng_end(void);
-void ng_katakana(void);
-void ng_save(void);
-void ng_hiragana(void);
-void ng_redo(void);
-void ng_undo(void);
-void ng_saihenkan(void);
-void ng_eof(void);
+void ng_prev_row(void);
+void ng_next_row(void);
 
-void ng_T(void);
-void ng_Y(void);
-void ng_ST(void);
-void ng_SY(void);
-
-void ngh_DFY(void);
-void ngh_DFU(void);
-void ngh_DFI(void);
-void ngh_DFO(void);
-void ngh_DFP(void);
-void ngh_DFH(void);
-void ngh_DFJ(void);
-void ngh_DFK(void);
-void ngh_DFL(void);
-void ngh_DFSCLN(void);
-void ngh_DFN(void);
-void ngh_DFM(void);
-void ngh_DFCOMM(void);
-void ngh_DFDOT(void);
-void ngh_DFSLSH(void);
-void ngh_JKQ(void);
-void ngh_JKW(void);
-void ngh_JKE(void);
-void ngh_JKR(void);
-void ngh_JKT(void);
-void ngh_JKA(void);
-void ngh_JKS(void);
-void ngh_JKD(void);
-void ngh_JKF(void);
-void ngh_JKG(void);
-void ngh_JKZ(void);
-void ngh_JKX(void);
-void ngh_JKC(void);
-void ngh_JKV(void);
-void ngh_JKB(void);
-void ngh_CVY(void);
-void ngh_CVU(void);
-void ngh_CVI(void);
-void ngh_CVO(void);
-void ngh_CVP(void);
-void ngh_CVH(void);
-void ngh_CVJ(void);
-void ngh_CVK(void);
-void ngh_CVL(void);
-void ngh_CVSCLN(void);
-void ngh_CVN(void);
-void ngh_CVM(void);
-void ngh_CVCOMM(void);
-void ngh_CVDOT(void);
-void ngh_CVSLSH(void);
-void ngh_MCQ(void);
-void ngh_MCW(void);
-void ngh_MCE(void);
-void ngh_MCR(void);
-void ngh_MCT(void);
-void ngh_MCA(void);
-void ngh_MCS(void);
-void ngh_MCD(void);
-void ngh_MCF(void);
-void ngh_MCG(void);
-void ngh_MCZ(void);
-void ngh_MCX(void);
-void ngh_MCC(void);
-void ngh_MCV(void);
-void ngh_MCB(void);
-
-void ngh_XCVY(void);
-void ngh_XCVU(void);
-void ngh_XCVI(void);
-void ngh_XCVO(void);
-void ngh_XCVP(void);
-void ngh_XCVH(void);
-void ngh_XCVJ(void);
-void ngh_XCVK(void);
-void ngh_XCVL(void);
-void ngh_XCVSCLN(void);
-void ngh_XCVN(void);
-void ngh_XCVM(void);
-void ngh_XCVCOMM(void);
-void ngh_XCVDOT(void);
-void ngh_XCVSLSH(void);
-
-void ngh_SDFY(void);
-void ngh_SDFU(void);
-void ngh_SDFI(void);
-void ngh_SDFO(void);
-void ngh_SDFP(void);
-void ngh_SDFH(void);
-void ngh_SDFJ(void);
-void ngh_SDFK(void);
-void ngh_SDFL(void);
-void ngh_SDFSCLN(void);
-void ngh_SDFN(void);
-void ngh_SDFM(void);
-void ngh_SDFCOMM(void);
-void ngh_SDFDOT(void);
-void ngh_SDFSLSH(void);
-
-void ngh_JKLQ(void);
-void ngh_JKLW(void);
-void ngh_JKLE(void);
-void ngh_JKLR(void);
-void ngh_JKLT(void);
-void ngh_JKLA(void);
-void ngh_JKLS(void);
-void ngh_JKLD(void);
-void ngh_JKLF(void);
-void ngh_JKLG(void);
-void ngh_JKLZ(void);
-void ngh_JKLX(void);
-void ngh_JKLC(void);
-void ngh_JKLV(void);
-void ngh_JKLB(void);
-
-void ngh_MCDQ(void);
-void ngh_MCDW(void);
-void ngh_MCDE(void);
-void ngh_MCDR(void);
-void ngh_MCDT(void);
-void ngh_MCDA(void);
-void ngh_MCDS(void);
-void ngh_MCDD(void);
-void ngh_MCDF(void);
-void ngh_MCDG(void);
-void ngh_MCDZ(void);
-void ngh_MCDX(void);
-void ngh_MCDC(void);
-void ngh_MCDV(void);
-void ngh_MCDB(void);
-
-// bool enable_naginata(uint16_t, keyrecord_t *);
+// Unicode文字列の送出(strはRAM、pstrはPROGMEM)
+void ng_send_unicode_string(const char *);
+void ng_send_unicode_string_P(const char *);
 
 // なぜKC_キーコードを使わず、NG_キーコードを定義するのか
 // 1. 英字レイアウトがQWERTYでない場合でもOK
