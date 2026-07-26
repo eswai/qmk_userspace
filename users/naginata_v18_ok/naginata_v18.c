@@ -535,7 +535,7 @@ static const PROGMEM naginata_kanamap ngdickana[] = {
   {.shift = B_J|B_K    , .douji = B_Q            , .kana = ""                                            , .func = ngh_JKQ }, // ^{End}
   {.shift = B_J|B_K    , .douji = B_W            , .kana = NGUE("／")                                    , .func = nofunc }, // ／{改行}
   {.shift = B_J|B_K    , .douji = B_R            , .kana = ""                                            , .func = ngh_JKR }, // ^s
-  {.shift = B_J|B_K    , .douji = B_T            , .kana = NGU("・")                                     , .func = nofunc }, // ・
+  {.shift = B_J|B_K    , .douji = B_T            , .kana = "/"                                           , .func = nofunc }, // ・
   {.shift = B_J|B_K    , .douji = B_A            , .kana = NGUE("……")                                   , .func = nofunc }, // ……{改行}
   {.shift = B_J|B_K    , .douji = B_S            , .kana = NGUE("『")                                    , .func = nofunc }, // 『{改行}
   {.shift = B_J|B_K    , .douji = B_D            , .kana = NGUE("？")                                    , .func = nofunc }, // ？{改行}

@@ -1082,7 +1082,7 @@ void ngh_JKR(void) {
 }
 
 void ngh_JKT(void) {
-  ng_send_unicode_string_P(PSTR("・"));
+  tap_code(KC_SLASH);
 }
 
 void ngh_JKA(void) {
