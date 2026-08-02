@@ -9,8 +9,8 @@ https://oookaworks.seesaa.net/article/520844835.html
 
 ### 記号入力
 
-編集モードや、漢字の入力に、拙作のMacUnicodeInputを利用する前提です。
-Unicode Hex Inputでは、スムースに漢字入力ができないので、専用のソフトを用意しました。
+編集モードや、漢字の入力に、WindowsではWinCompose、macOSでは拙作のMacUnicodeInputを利用する前提です。
+MacのUnicode Hex Inputでは、スムースに漢字入力ができないので、専用のソフトを用意しました。
 
 https://github.com/eswai/MacUnicodeInput
 
