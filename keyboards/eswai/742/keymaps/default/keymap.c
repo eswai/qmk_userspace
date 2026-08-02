@@ -29,12 +29,26 @@ enum custom_keycodes {
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    [_BASE] = LAYOUT(
-    KC_TAB        ,KC_Y   ,KC_R   ,KC_O    ,KC_U   ,KC_COMM, KC_NO    , KC_NO   ,KC_DOT ,KC_BSPC,KC_L   ,KC_F   ,KC_P    ,KC_QUOT , \
-    CTL_T(KC_ESC) ,KC_D   ,KC_S   ,KC_A    ,KC_I   ,KC_G   , KC_NO    , KC_NO   ,KC_J   ,KC_E   ,KC_H   ,KC_T   ,KC_K    ,KC_SCLN , \
-    KC_LSFT       ,KC_V   ,KC_Z   ,KC_X    ,KC_M   ,KC_C   , KC_NO    , KC_NO   ,KC_N   ,KC_W   ,KC_B   ,KC_Q   ,KC_SLSH ,KC_UP   , \
-    KC_LCTL       ,KC_LWIN,KC_LALT,KC_LCTL,MO(_LOWER),LSFT_T(KC_SPC)  ,LSFT_T(KC_ENT)   ,MO(_RAISE),KC_RSFT,KC_LEFT,KC_DOWN ,KC_RGHT
-    )
+  [_BASE] = LAYOUT(
+    KC_TAB,        KC_Q,   KC_W,   KC_E,    KC_R,   KC_T,   G(KC_X), G(KC_Z), KC_Y,   KC_U,   KC_I,    KC_O,   KC_P,    KC_BSPC,
+    WIN_T(KC_ESC), KC_A,   KC_S,   KC_D,    KC_F,   KC_G,   G(KC_C), G(KC_S), KC_H,   KC_J,   KC_K,    KC_L,   KC_SCLN, KC_QUOT,
+    KC_LSFT,       KC_Z,   KC_X,   KC_C,    KC_V,   KC_B,   G(KC_V), G(KC_Y), KC_N,   KC_M,   KC_COMM, KC_DOT, KC_SLSH, KC_RSFT,
+    KC_LCTL,       KC_LWIN,KC_LALT,KC_LCTL, MO(_LOWER),     KC_SPC,  KC_ENT,          MO(_RAISE),KC_LEFT,KC_DOWN, KC_UP,   KC_RGHT
+  ),
+
+  [_LOWER] = LAYOUT(
+    _______, XXXXXXX, XXXXXXX, KC_COLN, KC_SCLN, XXXXXXX, XXXXXXX, XXXXXXX, KC_SLSH, KC_7,    KC_8,    KC_9,    KC_MINS, KC_DEL,
+    _______, XXXXXXX, KC_LBRC, KC_LCBR, KC_LPRN, KC_LT,   XXXXXXX, XXXXXXX, KC_ASTR, KC_4,    KC_5,    KC_6,    KC_PLUS, _______,
+    _______, XXXXXXX, KC_RBRC, KC_RCBR, KC_RPRN, KC_GT,   XXXXXXX, XXXXXXX, KC_0,    KC_1,    KC_2,    KC_3,    KC_EQL,  _______,
+    QK_BOOT,  _______, _______, _______, _______,          _______, _______,          _______, _______, _______, _______, _______
+  ),
+
+  [_RAISE] = LAYOUT(
+    _______, KC_TILD, KC_AT,   KC_HASH, KC_DLR,  XXXXXXX,         XXXXXXX, XXXXXXX, XXXXXXX, KC_HOME, KC_UP,   KC_END,  XXXXXXX, KC_DEL,
+    _______, KC_CIRC, KC_AMPR, KC_QUES, KC_PERC, KC_INT3,         XXXXXXX, XXXXXXX, XXXXXXX, KC_LEFT, KC_DOWN, KC_RGHT, XXXXXXX, XXXXXXX,
+    _______, KC_GRV,  KC_PIPE, KC_EXLM, KC_UNDS, LALT(KC_INT3),   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______,
+    _______, _______, _______, _______, _______,                  _______, _______,          _______, _______, _______, _______, _______
+  )
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {

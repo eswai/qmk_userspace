@@ -87,3 +87,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #undef LOCKING_RESYNC_ENABLE
 #define NO_ACTION_ONESHOT
 #define LAYER_STATE_16BIT
+
+/* スリープ復帰後にキーボードが無反応になる問題の対策 */
+// #define USB_SUSPEND_WAKEUP_DELAY 200
+// #define SPLIT_WATCHDOG_ENABLE

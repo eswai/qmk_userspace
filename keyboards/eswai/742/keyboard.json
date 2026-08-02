@@ -38,10 +38,6 @@
             "driver": "bitbang",
             "pin": "D2"
         },
-        "usb_detect": {
-            "enabled": true,
-            "timeout": 1000
-        },
         "main": "left"
     },
     "usb": {

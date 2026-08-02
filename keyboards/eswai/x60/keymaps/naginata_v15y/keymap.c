@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
-#include "os_detection.h"
+// #include "os_detection.h"
 #include "twpair_on_jis.h"
 
 // 薙刀式
@@ -41,7 +41,7 @@ enum custom_keycodes {
     EISUON,
 };
 
-static deferred_token my_token;
+// static deferred_token my_token;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_WIN] = LAYOUT(
@@ -107,7 +107,7 @@ uint32_t kanaoff(uint32_t trigger_time, void *cb_arg) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  extend_deferred_exec(my_token, NAGINATA_TIMEOUT);
+  // extend_deferred_exec(my_token, NAGINATA_TIMEOUT);
 
   switch (keycode) {
     case EISUON:
@@ -151,25 +151,25 @@ void keyboard_post_init_user(void) {
   set_naginata(_NAGINATA, ngonkeys, ngoffkeys);
   // 薙刀式
   
-  wait_ms(400);
-  switch (detected_host_os()) {
-    case OS_WINDOWS:
-      layer_move(_WIN);
-      switchOS(NG_WIN);
-      break;
-    case OS_MACOS:
-    case OS_IOS:
-      layer_move(_MAC);
-      switchOS(NG_MAC);
-      break;
-    case OS_LINUX:
-      layer_move(_WIN);
-      switchOS(NG_LINUX);
-      break;
-    default:
-      layer_move(_WIN);
-      switchOS(NG_WIN);
-  }
+  // wait_ms(400);
+  // switch (detected_host_os()) {
+  //   case OS_WINDOWS:
+  //     layer_move(_WIN);
+  //     switchOS(NG_WIN);
+  //     break;
+  //   case OS_MACOS:
+  //   case OS_IOS:
+  //     layer_move(_MAC);
+  //     switchOS(NG_MAC);
+  //     break;
+  //   case OS_LINUX:
+  //     layer_move(_WIN);
+  //     switchOS(NG_LINUX);
+  //     break;
+  //   default:
+  //     layer_move(_WIN);
+  //     switchOS(NG_WIN);
+  // }
 
-  my_token = defer_exec(NAGINATA_TIMEOUT, kanaoff, NULL);
+  // my_token = defer_exec(NAGINATA_TIMEOUT, kanaoff, NULL);
 }

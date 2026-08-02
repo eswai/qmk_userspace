@@ -1,4 +1,4 @@
-# v15fix版
+# v16
 
 tanda = <<ETANDA
   |き|て|し|{←}|{→}|{BS}|る|す|へ|@|[  |
@@ -321,6 +321,9 @@ $henshu = {
   "{↓}" => ["ng_down(1);"],
   "{改行 2}" => ["tap_code(KC_ENT);"] * 2,
   "{改行}" => ["tap_code(KC_ENT);"],
+  "+{Esc 2}" => ["register_code(KC_LSFT);", "tap_code(KC_ESC);", "tap_code(KC_ESC);", "unregister_code(KC_LSFT);"],
+  "+{← 7}" => ["register_code(KC_LSFT);", "ng_left(7);", "unregister_code(KC_LSFT);"],
+  "+{→ 7}" => ["register_code(KC_LSFT);", "ng_right(7);", "unregister_code(KC_LSFT);"],
  }
  
 qwerty    = %w(Q W E R T  Y U I O P NO NO A S D F G  H J K L SCLN NO NO Z X C V B  N M COMM DOT SLSH NO)
