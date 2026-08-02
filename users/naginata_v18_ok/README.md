@@ -13,3 +13,37 @@ https://oookaworks.seesaa.net/article/520844835.html
 Unicode Hex Inputでは、スムースに漢字入力ができないので、専用のソフトを用意しました。
 
 https://github.com/eswai/MacUnicodeInput
+
+### macOSのかな/英数と連動する(raw HID)
+
+MacUnicodeInputとraw HIDで通信し、macOSのかな/英数に薙刀式のオンオフを合わせます。
+マウスやトラックパッド、他のアプリ、`⌘Space`、あるいはキーボード以外の手段で
+かな/英数が切り替わっても、薙刀式のオンオフがずれません。
+
+通信は **mac → キーボードの一方向** です。キーボードはmacの状態に従うだけで、
+受け取った状態に対してかな/英数キーを送り返さないので、往復して振動することはありません。
+逆向き(キーボード → mac)は従来どおり、`naginata_on`/`naginata_off`が送る
+かな(`KC_LANG1`)/英数(`KC_LANG2`)キーで切り替わるので、HIDで送るものはありません。
+
+使うには、キーマップの`rules.mk`で有効にします(容量が厳しいAVRのために既定はオフ)。
+
+```make
+RAW_ENABLE = yes
+```
+
+ホスト側はMacUnicodeInputのメニューに接続台数が出ます。
+`RAW_USAGE_PAGE`/`RAW_USAGE_ID`はQMKの既定値(`0xFF60`/`0x61`)を使います。
+
+#### プロトコル
+
+32バイト固定長。余りは0埋め。
+
+| バイト | 内容 |
+| --- | --- |
+| 0 | マジック `'N'` |
+| 1 | コマンド `STATE` (0x01) |
+| 2 | 1:かな(薙刀式オン) / 0:英数(オフ) |
+
+MacUnicodeInputは入力ソースが変わったときと、キーボードを見つけたときに送ります。
+後者があるので、MacUnicodeInputとキーボードのどちらを先に起動しても、
+またキーボードを挿し直しても同期します。

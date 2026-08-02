@@ -685,24 +685,44 @@ void set_naginata(uint8_t layer, uint16_t *onk, uint16_t *offk) {
   ng_set_unicode_mode(naginata_config.os);
 }
 
+// 内部状態(フラグとレイヤー)だけを切り替える。ホストにはキーを送らない
+static void ng_apply_state(bool on) {
+  is_naginata = on;
+  naginata_clear();
+  if (on) {
+    layer_on(naginata_layer);
+  } else {
+    layer_off(naginata_layer);
+  }
+}
+
 // 薙刀式をオン
 void naginata_on(void) {
-  is_naginata = true;
-  naginata_clear();
-  layer_on(naginata_layer);
+  ng_apply_state(true);
 
-  tap_code(KC_LANGUAGE_1); // Mac
-  tap_code(KC_INTERNATIONAL_4); // Win
+  if (naginata_config.os == NG_MAC) {
+    tap_code(KC_LANGUAGE_1); // かな
+  } else {
+    tap_code(KC_INTERNATIONAL_4); // 変換
+  }
 }
 
 // 薙刀式をオフ
 void naginata_off(void) {
-  is_naginata = false;
-  naginata_clear();
-  layer_off(naginata_layer);
+  ng_apply_state(false);
 
-  tap_code(KC_LANGUAGE_2); // Mac
-  tap_code(KC_INTERNATIONAL_5); // Win
+  if (naginata_config.os == NG_MAC) {
+    tap_code(KC_LANGUAGE_2); // 英数
+  } else {
+    tap_code(KC_INTERNATIONAL_5); // 無変換
+  }
+}
+
+// ホストのIME状態に合わせる(MacUnicodeInputからのraw HID通知で呼ばれる)。
+// かな/英数のキーを送り返さないので、ホストとの間でループしない
+void naginata_sync_state(bool on) {
+  if (is_naginata == on) return;
+  ng_apply_state(on);
 }
 
 // 薙刀式のon/off状態を返す

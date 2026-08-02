@@ -30,6 +30,8 @@ void naginata_task(void);
 void naginata_on(void);
 void naginata_off(void);
 bool naginata_state(void);
+// ホスト(MacUnicodeInput)のかな/英数に合わせる。かな⇔英数のキーは送出しない
+void naginata_sync_state(bool);
 
 void switchOS(uint8_t);
 void ng_set_unicode_mode(uint8_t);
@@ -116,7 +118,7 @@ extern user_config_t naginata_config;
 
 // 重なり時間がこの値(ms)未満なら同時押しではなく個別打鍵と判定する。0で無効(従来動作)
 #ifndef NG_MIN_OVERLAP_MS
-#define NG_MIN_OVERLAP_MS 50
+#define NG_MIN_OVERLAP_MS 30
 #endif
 
 #define NG_WIN 1
