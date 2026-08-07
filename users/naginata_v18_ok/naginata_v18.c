@@ -128,7 +128,7 @@ void ng_send_unicode_string(const char *str) {
       tap_code(KC_INTERNATIONAL_4);
       break;
     case NG_WIN:
-    case NG_MAC: // MacUnicodeInput用
+    case NG_MAC:
       send_unicode_string(str);
       break;
   }
@@ -742,8 +742,7 @@ void ng_set_unicode_mode(uint8_t os) {
       set_unicode_input_mode(UNICODE_MODE_WINCOMPOSE);
       break;
     case NG_MAC:
-      set_unicode_input_mode(UNICODE_MODE_WINCOMPOSE); // MacUnicodeInput用
-      // set_unicode_input_mode(UNICODE_MODE_MACOS);
+      set_unicode_input_mode(UNICODE_MODE_MACOS);
       break;
     case NG_LINUX:
       set_unicode_input_mode(UNICODE_MODE_LINUX);

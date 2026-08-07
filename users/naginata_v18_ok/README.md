@@ -9,14 +9,14 @@ https://oookaworks.seesaa.net/article/520844835.html
 
 ### 記号入力
 
-編集モードや、漢字の入力に、WindowsではWinCompose、macOSでは拙作のMacUnicodeInputを利用する前提です。
+編集モードや、漢字の入力に、WindowsではWinCompose、macOSでは拙作のIshizukiを利用する前提です。
 MacのUnicode Hex Inputでは、スムースに漢字入力ができないので、専用のソフトを用意しました。
 
-https://github.com/eswai/MacUnicodeInput
+https://github.com/eswai/Ishizuki
 
 ### macOSのかな/英数と連動する(raw HID)
 
-MacUnicodeInputとraw HIDで通信し、macOSのかな/英数に薙刀式のオンオフを合わせます。
+Ishizukiとraw HIDで通信し、macOSのかな/英数に薙刀式のオンオフを合わせます。
 マウスやトラックパッド、他のアプリ、`⌘Space`、あるいはキーボード以外の手段で
 かな/英数が切り替わっても、薙刀式のオンオフがずれません。
 
@@ -31,7 +31,7 @@ MacUnicodeInputとraw HIDで通信し、macOSのかな/英数に薙刀式のオ�
 RAW_ENABLE = yes
 ```
 
-ホスト側はMacUnicodeInputのメニューに接続台数が出ます。
+ホスト側はIshizuzkiのメニューに接続台数が出ます。
 `RAW_USAGE_PAGE`/`RAW_USAGE_ID`はQMKの既定値(`0xFF60`/`0x61`)を使います。
 
 #### プロトコル
@@ -44,6 +44,6 @@ RAW_ENABLE = yes
 | 1 | コマンド `STATE` (0x01) |
 | 2 | 1:かな(薙刀式オン) / 0:英数(オフ) |
 
-MacUnicodeInputは入力ソースが変わったときと、キーボードを見つけたときに送ります。
-後者があるので、MacUnicodeInputとキーボードのどちらを先に起動しても、
+Ishizuzkiは入力ソースが変わったときと、キーボードを見つけたときに送ります。
+後者があるので、Ishizuzkiとキーボードのどちらを先に起動しても、
 またキーボードを挿し直しても同期します。
